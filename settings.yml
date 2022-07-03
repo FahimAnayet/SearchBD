@@ -2,7 +2,7 @@ general:
   # Debug mode, only for development
   debug: false
   # displayed name
-  instance_name: "PaglaSearch"
+  instance_name: "SearchBd"
   # For example: https://example.com/privacy
   privacypolicy_url: false
   # use true to use your own donation page written in searx/info/en/donate.md
@@ -56,8 +56,7 @@ server:
   # instance's enviroment (make buildenv)
   port: 8888
   bind_address: "127.0.0.1"
-  base_url: false
-  #base_url: https://fahimanayet.pythonanywhere.com  # Possible values: false or "https://example.org/location".
+  base_url: "https://search-bd.vercel.app" # Possible values: false or "https://example.org/location".
   limiter: false  # rate limit the number of request on the instance, block some bots
 
   # If your instance owns a /etc/searxng/settings.yml file, then set the following

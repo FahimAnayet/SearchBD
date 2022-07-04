@@ -1413,5 +1413,4 @@ application = app
 patch_application(app)
 
 if __name__ == "__main__":
-    app.debug=True
     run()

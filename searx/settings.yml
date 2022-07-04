@@ -1,6 +1,6 @@
 general:
   # Debug mode, only for development
-  debug: true
+  debug: false
   # displayed name
   instance_name: "SearchBd"
   # For example: https://example.com/privacy

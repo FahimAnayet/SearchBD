@@ -57,27 +57,32 @@ class SettingsValue:
 
     def __init__(
         self,
-        type_definition: typing.Union[None, typing.Any, typing.Tuple[typing.Any]] = None,
+        type_definition: typing.Union[None,
+                                      typing.Any, typing.Tuple[typing.Any]] = None,
         default: typing.Any = None,
         environ_name: str = None,
     ):
         self.type_definition = (
-            type_definition if type_definition is None or isinstance(type_definition, tuple) else (type_definition,)
+            type_definition if type_definition is None or isinstance(
+                type_definition, tuple) else (type_definition,)
         )
         self.default = default
         self.environ_name = environ_name
 
     @property
     def type_definition_repr(self):
-        types_str = [t.__name__ if isinstance(t, type) else repr(t) for t in self.type_definition]
+        types_str = [t.__name__ if isinstance(
+            t, type) else repr(t) for t in self.type_definition]
         return ', '.join(types_str)
 
     def check_type_definition(self, value: typing.Any) -> None:
         if value in self.type_definition:
             return
-        type_list = tuple(t for t in self.type_definition if isinstance(t, type))
+        type_list = tuple(
+            t for t in self.type_definition if isinstance(t, type))
         if not isinstance(value, type_list):
-            raise ValueError('The value has to be one of these types/values: {}'.format(self.type_definition_repr))
+            raise ValueError(
+                'The value has to be one of these types/values: {}'.format(self.type_definition_repr))
 
     def __call__(self, value: typing.Any) -> typing.Any:
         if value == _UNDEFINED:
@@ -100,7 +105,8 @@ class SettingSublistValue(SettingsValue):
             raise ValueError('The value has to a list')
         for item in value:
             if not item in self.type_definition[0]:
-                raise ValueError('{} not in {}'.format(item, self.type_definition))
+                raise ValueError('{} not in {}'.format(
+                    item, self.type_definition))
 
 
 class SettingsDirectoryValue(SettingsValue):
@@ -109,7 +115,8 @@ class SettingsDirectoryValue(SettingsValue):
     def check_type_definition(self, value: typing.Any) -> typing.Any:
         super().check_type_definition(value)
         if not os.path.isdir(value):
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), value)
+            raise FileNotFoundError(
+                errno.ENOENT, os.strerror(errno.ENOENT), value)
 
     def __call__(self, value: typing.Any) -> typing.Any:
         if value == '':
@@ -128,7 +135,8 @@ def apply_schema(settings, schema, path_list):
                 logger.error('%s: %s', '.'.join([*path_list, key]), e)
                 error = True
         elif isinstance(value, dict):
-            error = error or apply_schema(settings.setdefault(key, {}), schema[key], [*path_list, key])
+            error = error or apply_schema(settings.setdefault(
+                key, {}), schema[key], [*path_list, key])
         else:
             settings.setdefault(key, value)
     if len(path_list) == 0 and error:
@@ -139,7 +147,7 @@ def apply_schema(settings, schema, path_list):
 SCHEMA = {
     'general': {
         'debug': SettingsValue(bool, False, 'SEARXNG_DEBUG'),
-        'instance_name': SettingsValue(str, 'SearXNG'),
+        'instance_name': SettingsValue(str, 'SearchBD'),
         'privacypolicy_url': SettingsValue((None, False, str), None),
         'contact_url': SettingsValue((None, False, str), None),
         'donation_url': SettingsValue((bool, str), "https://docs.searxng.org/donate.html"),

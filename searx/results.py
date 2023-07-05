@@ -6,6 +6,7 @@ from typing import List, NamedTuple, Set
 from urllib.parse import urlparse, unquote
 
 from searx import logger
+from searx import utils
 from searx.engines import engines
 from searx.metrics import histogram_observe, counter_add, count_error
 
@@ -134,9 +135,9 @@ def result_score(result):
         if hasattr(engines[result_engine], 'weight'):
             weight *= float(engines[result_engine].weight)
 
-    occurences = len(result['positions'])
+    occurrences = len(result['positions'])
 
-    return sum((occurences * weight) / position for position in result['positions'])
+    return sum((occurrences * weight) / position for position in result['positions'])
 
 
 class Timing(NamedTuple):
@@ -286,7 +287,7 @@ class ResultContainer:
         if 'template' not in result:
             result['template'] = 'default.html'
 
-        # strip multiple spaces and cariage returns from content
+        # strip multiple spaces and carriage returns from content
         if result.get('content'):
             result['content'] = WHITESPACE_REGEX.sub(' ', result['content'])
 
@@ -315,7 +316,7 @@ class ResultContainer:
                     return merged_result
                 else:
                     # it's an image
-                    # it's a duplicate if the parsed_url, template and img_src are differents
+                    # it's a duplicate if the parsed_url, template and img_src are different
                     if result.get('img_src', '') == merged_result.get('img_src', ''):
                         return merged_result
         return None
@@ -353,6 +354,10 @@ class ResultContainer:
         for result in self._merged_results:
             score = result_score(result)
             result['score'] = score
+            if result.get('content'):
+                result['content'] = utils.html_to_text(result['content']).strip()
+            # removing html content and whitespace duplications
+            result['title'] = ' '.join(utils.html_to_text(result['title']).strip().split())
             for result_engine in result['engines']:
                 counter_add(score, 'engine', result_engine, 'score')
 
@@ -415,11 +420,19 @@ class ResultContainer:
     def results_length(self):
         return len(self._merged_results)
 
-    def results_number(self):
+    @property
+    def number_of_results(self) -> int:
+        """Returns the average of results number, returns zero if the average
+        result number is smaller than the actual result count."""
+
         resultnum_sum = sum(self._number_of_results)
         if not resultnum_sum or not self._number_of_results:
             return 0
-        return resultnum_sum / len(self._number_of_results)
+
+        average = int(resultnum_sum / len(self._number_of_results))
+        if average < self.results_length():
+            average = 0
+        return average
 
     def add_unresponsive_engine(self, engine_name: str, error_type: str, suspended: bool = False):
         if engines[engine_name].display_error_messages:

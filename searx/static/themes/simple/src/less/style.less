@@ -302,6 +302,49 @@ article[data-vim-selected].category-social {
   }
 }
 
+.result-paper {
+  .attributes {
+    display: table;
+    border-spacing: 0.125rem;
+
+    div {
+      display: table-row;
+
+      span {
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        display: table-cell;
+
+        time {
+          font-size: 0.9rem;
+        }
+      }
+
+      span:first-child {
+        color: var(--color-base-font);
+        min-width: 10rem;
+      }
+
+      span:nth-child(2) {
+        color: var(--color-result-publishdate-font);
+      }
+    }
+  }
+
+  .content {
+    margin-top: 0.25rem;
+  }
+
+  .comments {
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0 0;
+    padding: 0;
+    word-wrap: break-word;
+    line-height: 1.24;
+    font-style: italic;
+  }
+}
+
 .template_group_images {
   display: flex;
   flex-wrap: wrap;
@@ -319,7 +362,7 @@ article[data-vim-selected].category-social {
 .category-files,
 .category-social {
   border: 1px solid var(--color-result-border);
-  margin: 1rem @results-tablet-offset 0 @results-tablet-offset !important;
+  margin: 0 @results-tablet-offset 1rem @results-tablet-offset !important;
   .rounded-corners;
 }
 
@@ -360,6 +403,9 @@ article[data-vim-selected].category-social {
 
 .engines {
   .ltr-float-right();
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   color: var(--color-result-engines-font);
 
   span {
@@ -483,10 +529,14 @@ article[data-vim-selected].category-social {
   grid-area: urls;
 }
 
+#apis .wrapper {
+  display: flex;
+}
+
 #suggestions {
   .wrapper {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: column;
     justify-content: flex-end;
 
     form {
@@ -506,6 +556,10 @@ article[data-vim-selected].category-social {
     background: transparent;
     color: var(--color-result-search-url-font);
     cursor: pointer;
+    width: calc(100%);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: left;
   }
 
   input[type="submit"],
@@ -539,11 +593,28 @@ article[data-vim-selected].category-social {
   }
 }
 
+#infoboxes .title,
 #suggestions .title,
 #search_url .title,
+#engines_msg .title,
 #apis .title {
   margin: 2em 0 0.5em 0;
   color: var(--color-base-font);
+}
+
+summary.title {
+  cursor: pointer;
+  padding-top: 1em;
+}
+
+.sidebar-collapsable {
+  border-top: 1px solid var(--color-sidebar-border);
+  padding-bottom: 0.5em;
+}
+
+#sidebar-end-collapsable {
+  border-bottom: 1px solid var(--color-sidebar-border);
+  width: 100%;
 }
 
 #answers {
@@ -594,24 +665,29 @@ article[data-vim-selected].category-social {
       padding: 0;
     }
 
-    dl {
-      margin: 0.5em 0;
-    }
-
     dt {
-      display: inline;
-      margin-top: 0.5em;
-      .ltr-margin-right(0.25em);
-      margin-bottom: 0.5em;
-      .ltr-margin-left(0);
-      padding: 0;
       font-weight: bold;
     }
 
-    dd {
-      display: inline;
-      margin: 0.5em 0;
-      padding: 0;
+    .attributes {
+      dl {
+        margin: 0.5em 0;
+      }
+
+      dt {
+        display: inline;
+        margin-top: 0.5em;
+        .ltr-margin-right(0.25em);
+        margin-bottom: 0.5em;
+        .ltr-margin-left(0);
+        padding: 0;
+      }
+
+      dd {
+        display: inline;
+        margin: 0.5em 0;
+        padding: 0;
+      }
     }
 
     input {
@@ -629,9 +705,15 @@ article[data-vim-selected].category-social {
   }
 }
 
-#search_url {
-  margin-top: 8px;
+#apis {
+  input {
+    font-size: 0.9em;
+    margin: 0 10px 0 0;
+    .show-content-button;
+  }
+}
 
+#search_url {
   div.selectable_url {
     pre {
       width: 200em;
@@ -679,9 +761,24 @@ article[data-vim-selected].category-social {
   }
 }
 
-#apis {
-  margin-top: 8px;
-  clear: both;
+.numbered_pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.page_number {
+  background: transparent !important;
+  color: var(--color-result-link-font) !important;
+  text-decoration: underline;
+}
+
+.page_number_current {
+  background: transparent;
+  color: var(--color-result-link-visited-font);
+  border: none;
 }
 
 #backToTop {
@@ -761,14 +858,6 @@ article[data-vim-selected].category-social {
     }
   }
 
-  #apis {
-    display: none;
-  }
-
-  #search_url {
-    display: none;
-  }
-
   .result {
     .thumbnail {
       max-width: 98%;
@@ -786,6 +875,9 @@ article[data-vim-selected].category-social {
 
     .engines {
       .ltr-float-right();
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
       padding: 0 0 3px 0;
     }
   }
@@ -949,6 +1041,32 @@ article[data-vim-selected].category-social {
   .infobox {
     border: none !important;
     background-color: var(--color-sidebar-background);
+  }
+
+  .numbered_pagination {
+    display: none;
+  }
+
+  .result-paper {
+    .attributes {
+      display: block;
+
+      div {
+        display: block;
+
+        span {
+          display: inline;
+        }
+
+        span:first-child {
+          font-weight: bold;
+        }
+
+        span:nth-child(2) {
+          .ltr-margin-left(0.5rem);
+        }
+      }
+    }
   }
 }
 

@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 import re
 
 from searx import settings
-from searx.languages import language_codes
+from searx.sxng_locales import sxng_locales
 from searx.engines import categories, engines, engine_shortcuts
 from searx.external_bang import get_bang_definition_and_autocomplete
 from searx.search import EngineRef
@@ -84,7 +84,7 @@ class LanguageParser(QueryPartParser):
         found = False
         # check if any language-code is equal with
         # declared language-codes
-        for lc in language_codes:
+        for lc in sxng_locales:
             lang_id, lang_name, country, english_name, _flag = map(str.lower, lc)
 
             # if correct language-code is found
@@ -104,7 +104,7 @@ class LanguageParser(QueryPartParser):
                     break
 
         # user may set a valid, yet not selectable language
-        if VALID_LANGUAGE_CODE.match(value):
+        if VALID_LANGUAGE_CODE.match(value) or value == 'auto':
             lang_parts = value.split('-')
             if len(lang_parts) > 1:
                 value = lang_parts[0].lower() + '-' + lang_parts[1].upper()
@@ -125,7 +125,7 @@ class LanguageParser(QueryPartParser):
                     self.raw_text_query.autocomplete_list.append(lang)
             return
 
-        for lc in language_codes:
+        for lc in sxng_locales:
             if lc[0] not in settings['search']['languages']:
                 continue
             lang_id, lang_name, country, english_name, _flag = map(str.lower, lc)
@@ -198,10 +198,10 @@ class BangParser(QueryPartParser):
             self.raw_text_query.enginerefs.append(EngineRef(value, 'none'))
             return True
 
-        # check if prefix is equal with categorie name
+        # check if prefix is equal with category name
         if value in categories:
             # using all engines for that search, which
-            # are declared under that categorie name
+            # are declared under that category name
             self.raw_text_query.enginerefs.extend(
                 EngineRef(engine.name, value)
                 for engine in categories[value]
@@ -219,7 +219,7 @@ class BangParser(QueryPartParser):
                     self._add_autocomplete(first_char + suggestion)
             return
 
-        # check if query starts with categorie name
+        # check if query starts with category name
         for category in categories:
             if category.startswith(value):
                 self._add_autocomplete(first_char + category.replace(' ', '_'))
@@ -311,7 +311,7 @@ class RawTextQuery:
 
     def getFullQuery(self):
         """
-        get full querry including whitespaces
+        get full query including whitespaces
         """
         return '{0} {1}'.format(' '.join(self.query_parts), self.getQuery()).strip()
 

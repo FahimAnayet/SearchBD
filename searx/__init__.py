@@ -83,11 +83,9 @@ def logging_config_debug():
             'programname': {'color': 'cyan'},
             'username': {'color': 'yellow'},
         }
-        coloredlogs.install(level=log_level, level_styles=level_styles,
-                            field_styles=field_styles, fmt=LOG_FORMAT_DEBUG)
+        coloredlogs.install(level=log_level, level_styles=level_styles, field_styles=field_styles, fmt=LOG_FORMAT_DEBUG)
     else:
-        logging.basicConfig(level=logging.getLevelName(
-            log_level), format=LOG_FORMAT_DEBUG)
+        logging.basicConfig(level=logging.getLevelName(log_level), format=LOG_FORMAT_DEBUG)
 
 
 searx_debug = settings['general']['debug']
